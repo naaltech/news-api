@@ -1,0 +1,15 @@
+name = "nevzat-ayaz-haber-api"
+main = "cloudflare-worker.js"
+compatibility_date = "2023-12-01"
+
+# KV Store için cache namespace
+[[kv_namespaces]]
+binding = "NEWS_CACHE"
+id = "your-actual-kv-namespace-id"
+preview_id = "your-preview-kv-namespace-id"
+
+[env.production.vars]
+ENVIRONMENT = "production"
+
+[env.staging.vars]
+ENVIRONMENT = "staging"
