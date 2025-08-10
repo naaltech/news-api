@@ -1,3 +1,4 @@
+![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fnews.naal.org.tr%2Fhealth&query=%24.status&label=API%20STATUS&labelColor=545a61&color=bef9c6)
 # 🏫 Nevzat Ayaz News API
 
 A Cloudflare Worker API that scrapes news from Nevzat Ayaz Anatolian High School website.
@@ -189,4 +190,5 @@ wrangler tail
 ## 📜 License
 
 MIT License - See LICENSE file for details.
+
 
