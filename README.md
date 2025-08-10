@@ -1,17 +1,6 @@
 # 🏫 Nevzat Ayaz News API
 
-A Cloudflare Worker API that scrapes news from Nevzat Ayaz Anatolian High School website, optimized for LinkedIn RSS integration.
-
-## 🚀 Features
-
-- ✅ **Cloudflare Worker**: Serverless deployment
-- ✅ **KV Cache**: Fast response with 5-minute caching  
-- ✅ **LinkedIn RSS Compatible**: RSS 2.0 standard
-- ✅ **Multi-Format**: JSON, XML, RSS output
-- ✅ **W3C Validated**: RSS validator compliant
-- ✅ **SEO Friendly**: Proper headers and meta tags
-- ✅ **CORS Support**: Frontend project ready
-- ✅ **UTF-8 Encoding**: Turkish character support
+A Cloudflare Worker API that scrapes news from Nevzat Ayaz Anatolian High School website.
 
 ## 📦 Deployment
 
@@ -157,32 +146,6 @@ Each news object contains the following fields:
 - ✅ Resource savings
 - ✅ Reduced site load
 
-## 🗄️ Database Integration
-
-Data format is compatible with MongoDB and PostgreSQL:
-
-### MongoDB
-```javascript
-// Direct insert
-await collection.insertMany(response.data);
-```
-
-### PostgreSQL
-```sql
-CREATE TABLE haberler (
-    id SERIAL PRIMARY KEY,
-    baslik VARCHAR(500),
-    url VARCHAR(1000),
-    icerik TEXT,
-    resim VARCHAR(1000),
-    kaynak VARCHAR(100),
-    yayin_tarihi TIMESTAMP,
-    cekilme_tarihi TIMESTAMP,
-    aktif BOOLEAN DEFAULT true,
-    okundu BOOLEAN DEFAULT false
-);
-```
-
 ## 🛠️ Development
 
 ### Local Testing
@@ -219,7 +182,6 @@ wrangler tail
 
 ## 📝 Notes
 
-- ⚠️ **Educational purpose**: Get permission before commercial use
 - 🌐 **Rate Limiting**: Delays included for site protection
 - 🔄 **Site Changes**: Updates needed if HTML structure changes
 - 💾 **Cache**: Use `?force=true` for fresh data
@@ -228,14 +190,3 @@ wrangler tail
 
 MIT License - See LICENSE file for details.
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📞 Support
-
-If you encounter any issues, please open an issue on GitHub.
