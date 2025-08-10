@@ -41,7 +41,7 @@ wrangler deploy --env production
 
 ### Base URL  
 ```
-https://nevzat-ayaz-haber-api.naal.workers.dev
+https://news.naal.org.tr
 ```
 
 ### Main Endpoints
@@ -60,7 +60,7 @@ https://nevzat-ayaz-haber-api.naal.workers.dev
 
 **RSS URL:**
 ```
-https://nevzat-ayaz-haber-api.naal.workers.dev/rss
+https://news.naal.org.tr/rss
 ```
 
 **Adding to LinkedIn:**
@@ -79,19 +79,19 @@ https://nevzat-ayaz-haber-api.naal.workers.dev/rss
 
 ```bash
 # JSON API (default)
-curl "https://nevzat-ayaz-haber-api.naal.workers.dev/api/haberler"
+curl "https://news.naal.org.tr/api/haberler"
 
 # XML format
-curl "https://nevzat-ayaz-haber-api.naal.workers.dev/api/haberler?format=xml"
+curl "https://news.naal.org.tr/api/haberler?format=xml"
 
 # RSS feed (for LinkedIn)
-curl "https://nevzat-ayaz-haber-api.naal.workers.dev/rss"
+curl "https://news.naal.org.tr/rss"
 
 # RSS validation
-curl "https://nevzat-ayaz-haber-api.naal.workers.dev/rss/validate"
+curl "https://news.naal.org.tr/rss/validate"
 
 # System status
-curl "https://nevzat-ayaz-haber-api.naal.workers.dev/health"
+curl "https://news.naal.org.tr/health"
 ```
 
 ## 📊 Response Format
