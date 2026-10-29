@@ -5,11 +5,5 @@ compatibility_date = "2023-12-01"
 # KV Store için cache namespace
 [[kv_namespaces]]
 binding = "NEWS_CACHE"
-id = "your-actual-kv-namespace-id"
-preview_id = "your-preview-kv-namespace-id"
-
-[env.production.vars]
-ENVIRONMENT = "production"
-
-[env.staging.vars]
-ENVIRONMENT = "staging"
+id = "8e3d5947a7a8427589ff3ab0a0213591"
+preview_id = "92d2e5fe8f574f2aa071b301a501335c"

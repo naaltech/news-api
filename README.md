@@ -11,31 +11,16 @@ npm install -g wrangler
 wrangler login
 ```
 
-### 2. Create KV Store
+### 2. KV Store
+The `NEWS_CACHE` KV namespace and its preview namespace already exist, and their IDs are set in `wrangler.toml`. No setup is needed.
+
+### 3. Deploy
 ```bash
-# Create production KV namespace
-wrangler kv:namespace create "NEWS_CACHE"
+# Local development (uses the preview KV namespace)
+wrangler dev
 
-# Create preview KV namespace (for development)
-wrangler kv:namespace create "NEWS_CACHE" --preview
-```
-
-### 3. Update wrangler.toml
-Update the KV namespace IDs in your `wrangler.toml` file:
-```toml
-[[kv_namespaces]]
-binding = "NEWS_CACHE"
-id = "your-actual-kv-namespace-id"           # get from command above
-preview_id = "your-preview-kv-namespace-id"  # get from command above
-```
-
-### 4. Deploy
-```bash
-# Development/Preview deploy
-wrangler deploy --env staging
-
-# Production deploy  
-wrangler deploy --env production
+# Production deploy (news.naal.org.tr)
+wrangler deploy
 ```
 
 ## 🎯 API Endpoints
