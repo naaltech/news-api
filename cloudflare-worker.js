@@ -48,6 +48,29 @@ function createCacheKey(options) {
     return `${CACHE_KEY_PREFIX}${limit || 'all'}_${detay ? 'detailed' : 'simple'}`;
 }
 
+// HTML entity'lerini çöz (&quot;, &amp;, &#39;, &ccedil; vb.)
+const NAMED_ENTITIES = {
+    amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ',
+    ccedil: 'ç', Ccedil: 'Ç', ouml: 'ö', Ouml: 'Ö', uuml: 'ü', Uuml: 'Ü',
+    lsquo: '‘', rsquo: '’', ldquo: '“', rdquo: '”', hellip: '…', ndash: '–', mdash: '—'
+};
+
+function decodeEntities(text) {
+    return text
+        .replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(parseInt(code, 10)))
+        .replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCodePoint(parseInt(code, 16)))
+        .replace(/&([a-zA-Z]+);/g, (match, name) => NAMED_ENTITIES[name] ?? match);
+}
+
+// Başlığı temizle: entity'leri çöz, eşi olmayan tırnakları kaldır
+function normalizeTitle(text) {
+    let title = decodeEntities(text).replace(/\s+/g, ' ').trim();
+    if ((title.match(/"/g) || []).length % 2 === 1) {
+        title = title.replace(/"/g, '');
+    }
+    return title.replace(/\s+/g, ' ').trim();
+}
+
 // Cheerio yerine basit HTML parsing
 class SimpleHTMLParser {
     constructor(html) {
@@ -62,7 +85,7 @@ class SimpleHTMLParser {
         
         while ((match = linkRegex.exec(this.html)) !== null) {
             const href = match[1];
-            const text = match[2].trim();
+            const text = normalizeTitle(match[2]);
             
             if (href.includes(pattern) && text.length > 10) {
                 links.push({
@@ -81,6 +104,7 @@ class SimpleHTMLParser {
         let content = this.html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
         content = content.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
         content = content.replace(/<[^>]+>/g, ' ');
+        content = decodeEntities(content);
         content = content.replace(/\s+/g, ' ').trim();
         
         return content;

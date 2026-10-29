@@ -1,6 +1,7 @@
 name = "nevzat-ayaz-haber-api"
 main = "cloudflare-worker.js"
 compatibility_date = "2023-12-01"
+account_id = "5590283992c3540f855f07ce63f58fe3"
 
 # KV Store için cache namespace
 [[kv_namespaces]]
