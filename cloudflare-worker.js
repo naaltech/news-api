@@ -71,6 +71,17 @@ function normalizeTitle(text) {
     return title.replace(/\s+/g, ' ').trim();
 }
 
+// Göreli linki tam URL yap ve Türkçe karakterleri kodla (ı -> %C4%B1),
+// böylece link her yerde tıklanabilir olur
+function toAbsoluteUrl(href) {
+    const url = href.startsWith('http') ? href : `https://nevzatayazal.meb.k12.tr${href}`;
+    try {
+        return encodeURI(decodeURI(url));
+    } catch (error) {
+        return encodeURI(url);
+    }
+}
+
 // Cheerio yerine basit HTML parsing
 class SimpleHTMLParser {
     constructor(html) {
@@ -177,8 +188,7 @@ async function fetchNews(options = {}) {
         
         for (let i = 0; i < links.length && i < effectiveLimit; i++) {
             const link = links[i];
-            const tamUrl = link.href.startsWith('http') ? 
-                link.href : `https://nevzatayazal.meb.k12.tr${link.href}`;
+            const tamUrl = toAbsoluteUrl(link.href);
             
             const haber = {
                 id: i + 1,
@@ -210,8 +220,7 @@ async function fetchNews(options = {}) {
                         // Resim bul
                         const images = detayParser.findImages();
                         if (images.length > 0) {
-                            haber.resim = images[0].startsWith('http') ? 
-                                images[0] : `https://nevzatayazal.meb.k12.tr${images[0]}`;
+                            haber.resim = toAbsoluteUrl(images[0]);
                         }
                     }
                     
