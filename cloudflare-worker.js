@@ -172,12 +172,20 @@ function parseNewsDetail(html) {
         detay.resim = toAbsoluteUrl(ogImage[1]);
     }
 
+    // Haber ve galeri sayfalarındaki tüm fotoğraflar a.vlightbox1 linklerinde
+    detay.resimler = [];
+    const imageRegex = /<a\b[^>]*class="vlightbox1"[^>]*href="([^"]+\.(?:jpe?g|png|gif|webp))"/gi;
+    let match;
+    while ((match = imageRegex.exec(html)) !== null) {
+        detay.resimler.push(toAbsoluteUrl(match[1]));
+    }
+
     return detay;
 }
 
-// Tek bir haberin detay sayfasını çek (galeri ve PDF linklerinde metin yok)
+// Tek bir haberin detay sayfasını çek (PDF duyurularında sayfa yok)
 async function enrichWithDetail(haber) {
-    if (!haber.url.includes('/icerikler/') || !haber.url.endsWith('.html')) {
+    if (!haber.url.endsWith('.html')) {
         return;
     }
 
@@ -191,6 +199,7 @@ async function enrichWithDetail(haber) {
             haber.icerik = detay.icerik || haber.icerik;
             haber.tarih = detay.tarih || haber.tarih;
             haber.resim = haber.resim || detay.resim || null;
+            haber.resimler = [...new Set([...haber.resimler, ...detay.resimler])];
         }
     } catch (error) {
         console.log(`Detay alınamadı: ${haber.baslik}`);
@@ -213,16 +222,20 @@ async function fetchNews(options = {}) {
         const satirlar = await fetchNewsList(limit);
         const cekilmeTarihi = new Date().toISOString();
 
-        const haberler = satirlar.slice(0, limit).map(satir => ({
-            id: parseInt(satir.SIRAID, 10),
-            baslik: normalizeTitle(satir.BASLIK),
-            url: toAbsoluteUrl(satir.LINK),
-            icerik: htmlToText(satir.KISAICERIK || '') || null,
-            resim: satir.MANSETRESIM ? toAbsoluteUrl(satir.MANSETRESIM) : null,
-            kaynak: 'Nevzat Ayaz Anadolu Lisesi',
-            tarih: parseTurkishDate(...satir.BASLANGICTARIHI.split('/')) || cekilmeTarihi,
-            cekilmeTarihi: cekilmeTarihi
-        }));
+        const haberler = satirlar.slice(0, limit).map(satir => {
+            const resim = satir.MANSETRESIM ? toAbsoluteUrl(satir.MANSETRESIM) : null;
+            return {
+                id: parseInt(satir.SIRAID, 10),
+                baslik: normalizeTitle(satir.BASLIK),
+                url: toAbsoluteUrl(satir.LINK),
+                icerik: htmlToText(satir.KISAICERIK || '') || null,
+                resim: resim,
+                resimler: resim ? [resim] : [],
+                kaynak: 'Nevzat Ayaz Anadolu Lisesi',
+                tarih: parseTurkishDate(...satir.BASLANGICTARIHI.split('/')) || cekilmeTarihi,
+                cekilmeTarihi: cekilmeTarihi
+            };
+        });
 
         // Detay isteniyorsa sayfaları küçük gruplar halinde çek
         if (detay) {
@@ -249,8 +262,10 @@ async function fetchNewsForDatabase(options = {}) {
             id: haber.id,
             baslik: haber.baslik,
             url: haber.url,
-            icerik: haber.icerik || null,
+            // Galeri ve PDF haberlerinde metin yok, başlık içerik olarak kullanılır
+            icerik: haber.icerik || haber.baslik,
             resim: haber.resim || null,
+            resimler: haber.resimler || [],
             kaynak: haber.kaynak,
             yayinTarihi: haber.tarih,
             cekilmeTarihi: haber.cekilmeTarihi,
@@ -286,7 +301,14 @@ function convertToXML(data, rootElement = 'haberler') {
         data.forEach(item => {
             xml += '  <haber>\n';
             Object.entries(item).forEach(([key, value]) => {
-                if (value !== null && value !== undefined) {
+                if (Array.isArray(value)) {
+                    // resimler -> <resimler><resim>...</resim></resimler>
+                    xml += `    <${key}>\n`;
+                    value.forEach(entry => {
+                        xml += `      <resim>${escapeXml(entry)}</resim>\n`;
+                    });
+                    xml += `    </${key}>\n`;
+                } else if (value !== null && value !== undefined) {
                     xml += `    <${key}>${escapeXml(value)}</${key}>\n`;
                 }
             });

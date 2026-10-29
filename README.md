@@ -95,6 +95,10 @@ curl "https://news.naal.org.tr/health"
       "url": "https://nevzatayazal.meb.k12.tr/icerikler/...",
       "icerik": "News content details...",
       "resim": "https://nevzatayazal.meb.k12.tr/meb_iys_dosyalar/.../image.jpg",
+      "resimler": [
+        "https://nevzatayazal.meb.k12.tr/meb_iys_dosyalar/.../image.jpg",
+        "https://nevzatayazal.meb.k12.tr/meb_iys_dosyalar/.../photo-1.jpg"
+      ],
       "kaynak": "Nevzat Ayaz Anadolu Lisesi",
       "yayinTarihi": "2023-12-01T07:30:00.000Z",
       "cekilmeTarihi": "2023-12-01T10:30:00.000Z",
@@ -112,8 +116,9 @@ Each news object contains the following fields:
 - **id** (number): Stable news ID from the school site
 - **baslik** (string): News title
 - **url** (string): Full URL of the news article, photo gallery or PDF
-- **icerik** (string|null): First 500 characters of the article text; `null` for photo galleries and PDF announcements, which have no text
+- **icerik** (string): First 500 characters of the article text; the title for photo galleries and PDF announcements, which have no text
 - **resim** (string|null): Cover image URL
+- **resimler** (string[]): Cover image followed by every photo in the article or photo gallery (only the cover with `detay=false`)
 - **kaynak** (string): "Nevzat Ayaz Anadolu Lisesi"
 - **yayinTarihi** (string): ISO publish date (with the time when the article page shows one)
 - **cekilmeTarihi** (string): Data scraping date
