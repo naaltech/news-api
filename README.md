@@ -1,7 +1,7 @@
 ![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fnews.naal.org.tr%2Fhealth&query=%24.status&label=API%20STATUS&labelColor=545a61&color=bef9c6)
 # 🏫 Nevzat Ayaz News API
 
-A Cloudflare Worker API that scrapes news from Nevzat Ayaz Anatolian High School website.
+A Cloudflare Worker API that serves news from the Nevzat Ayaz Anatolian High School website. The news list comes from the JSON endpoint behind the site's "Haberler" page (`/tema/icerik_listele_ajax.php`), and article pages are fetched for the text.
 
 ## 📦 Deployment
 
@@ -58,8 +58,8 @@ https://news.naal.org.tr/rss
 ### Parameters
 
 - **format** (string): Output format (`json`, `xml`, `rss`)
-- **limit** (int): Number of news items (default: 20)
-- **detay** (boolean): Detailed content (`?detay=true`)
+- **limit** (int): Number of news items (default: 20, max: 40)
+- **detay** (boolean): Fetch article pages for the text (default: `true`; `?detay=false` returns a faster list without `icerik`)
 
 ### Example Usage
 
@@ -90,12 +90,13 @@ curl "https://news.naal.org.tr/health"
   "cached": true,
   "data": [
     {
+      "id": 17803170,
       "baslik": "News title",
       "url": "https://nevzatayazal.meb.k12.tr/icerikler/...",
       "icerik": "News content details...",
-      "resim": "https://nevzatayazal.meb.k12.tr/image.jpg",
+      "resim": "https://nevzatayazal.meb.k12.tr/meb_iys_dosyalar/.../image.jpg",
       "kaynak": "Nevzat Ayaz Anadolu Lisesi",
-      "yayinTarihi": "2023-12-01T10:30:00.000Z",
+      "yayinTarihi": "2023-12-01T07:30:00.000Z",
       "cekilmeTarihi": "2023-12-01T10:30:00.000Z",
       "aktif": true,
       "okundu": false
@@ -108,12 +109,13 @@ curl "https://news.naal.org.tr/health"
 
 Each news object contains the following fields:
 
+- **id** (number): Stable news ID from the school site
 - **baslik** (string): News title
-- **url** (string): Full URL of the news article  
-- **icerik** (string|null): News content (if detay=true)
-- **resim** (string|null): Main image URL (if detay=true)
+- **url** (string): Full URL of the news article, photo gallery or PDF
+- **icerik** (string|null): First 500 characters of the article text; `null` for photo galleries and PDF announcements, which have no text
+- **resim** (string|null): Cover image URL
 - **kaynak** (string): "Nevzat Ayaz Anadolu Lisesi"
-- **yayinTarihi** (string): ISO date
+- **yayinTarihi** (string): ISO publish date (with the time when the article page shows one)
 - **cekilmeTarihi** (string): Data scraping date
 - **aktif** (boolean): true
 - **okundu** (boolean): false
@@ -122,8 +124,7 @@ Each news object contains the following fields:
 
 - **TTL**: 5 minutes (300 seconds)
 - **Storage**: Cloudflare KV Store
-- **Keys**: `news_cache_{limit}_{detay_level}`
-- **Bypass**: Use `?force=true` parameter
+- **Keys**: `news_cache_{limit}_{detay_level}`, expiring after the TTL
 
 ### Cache Benefits
 
@@ -168,9 +169,8 @@ wrangler tail
 
 ## 📝 Notes
 
-- 🌐 **Rate Limiting**: Delays included for site protection
-- 🔄 **Site Changes**: Updates needed if HTML structure changes
-- 💾 **Cache**: Use `?force=true` for fresh data
+- 🌐 **Rate Limiting**: Article pages are fetched five at a time to keep the load on the school site low
+- 🔄 **Site Changes**: Updates needed if the list endpoint or the article HTML (`#vlightbox1`, `og:image`) changes
 
 ## 📜 License
 
